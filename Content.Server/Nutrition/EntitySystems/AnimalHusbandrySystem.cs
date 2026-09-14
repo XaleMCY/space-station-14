@@ -40,13 +40,6 @@ public sealed partial class AnimalHusbandrySystem : EntitySystem
     private readonly HashSet<EntityUid> _failedAttempts = new();
     private readonly HashSet<EntityUid> _birthQueue = new();
 
-    /// <inheritdoc/>
-    public override void Initialize()
-    {
-        SubscribeLocalEvent<ReproductiveComponent, MindAddedMessage>(OnMindAdded);
-        SubscribeLocalEvent<InfantComponent, RefreshNameModifiersEvent>(OnRefreshNameModifiers);
-    }
-
     /// <summary>
     /// On initialization, delay first breeding attempt by one cycle so that animals do not breed when they spawn
     /// </summary>
@@ -55,12 +48,14 @@ public sealed partial class AnimalHusbandrySystem : EntitySystem
         ent.Comp.NextBreedAttempt = _timing.CurTime + _random.Next(ent.Comp.MinBreedAttemptInterval, ent.Comp.MaxBreedAttemptInterval);
 
     // we express EZ-pass terminate the pregnancy if a player takes the role
+    [SubscribeLocalEvent]
     private void OnMindAdded(EntityUid uid, ReproductiveComponent component, MindAddedMessage args)
     {
         component.Gestating = false;
         component.GestationEndTime = null;
     }
 
+    [SubscribeLocalEvent]
     private void OnRefreshNameModifiers(Entity<InfantComponent> entity, ref RefreshNameModifiersEvent args)
     {
         // This check may seem redundant, but it makes sure that the prefix is removed before the component is removed
