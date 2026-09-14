@@ -44,8 +44,10 @@ public sealed partial class AnimalHusbandrySystem : EntitySystem
     /// On initialization, delay first breeding attempt by one cycle so that animals do not breed when they spawn
     /// </summary>
     [SubscribeLocalEvent]
-    private void OnComponentInit(Entity<ReproductiveComponent> ent, ref ComponentInit args) =>
+    private void OnComponentInit(Entity<ReproductiveComponent> ent, ref ComponentInit args)
+    {
         ent.Comp.NextBreedAttempt = _timing.CurTime + _random.Next(ent.Comp.MinBreedAttemptInterval, ent.Comp.MaxBreedAttemptInterval);
+    }
 
     // we express EZ-pass terminate the pregnancy if a player takes the role
     [SubscribeLocalEvent]
